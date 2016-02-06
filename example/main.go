@@ -15,7 +15,6 @@ import (
 
 var (
 	run *exec.Cmd
-	mu  sync.Mutex
 )
 
 func main() {
@@ -88,7 +87,7 @@ func PlayAudioFile(v *discordgo.Voice, filename string) {
 		return
 	}
 
-	// Starts the ffmpeg command
+	// Starts the ff2opus command
 	err = run.Start()
 	if err != nil {
 		fmt.Println("RunStart Error:", err)
@@ -112,7 +111,7 @@ func PlayAudioFile(v *discordgo.Voice, filename string) {
 			return
 		}
 		if err != nil {
-			fmt.Println("error reading from ffmpeg stdout :", err)
+			fmt.Println("error reading from ff2opus stdout :", err)
 			return
 		}
 
@@ -123,7 +122,7 @@ func PlayAudioFile(v *discordgo.Voice, filename string) {
 			return
 		}
 		if err != nil {
-			fmt.Println("error reading from ffmpeg stdout :", err)
+			fmt.Println("error reading from ff2opus stdout :", err)
 			return
 		}
 
