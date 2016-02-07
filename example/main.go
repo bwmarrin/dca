@@ -80,14 +80,14 @@ func main() {
 func PlayAudioFile(v *discordgo.Voice, filename string) {
 
 	// Create a shell command "object" to run.
-	run = exec.Command("ff2opus", filename)
+	run = exec.Command("dca", filename)
 	stdout, err := run.StdoutPipe()
 	if err != nil {
 		fmt.Println("StdoutPipe Error:", err)
 		return
 	}
 
-	// Starts the ff2opus command
+	// Starts the dca command
 	err = run.Start()
 	if err != nil {
 		fmt.Println("RunStart Error:", err)
@@ -105,24 +105,24 @@ func PlayAudioFile(v *discordgo.Voice, filename string) {
 
 	for {
 
-		// read "header" from ff2opus
+		// read "header" from dca
 		err = binary.Read(stdout, binary.LittleEndian, &opuslen)
 		if err == io.EOF || err == io.ErrUnexpectedEOF {
 			return
 		}
 		if err != nil {
-			fmt.Println("error reading from ff2opus stdout :", err)
+			fmt.Println("error reading from dca stdout :", err)
 			return
 		}
 
-		// read opus data from ff2opus
+		// read opus data from dca
 		opus := make([]byte, opuslen)
 		err = binary.Read(stdout, binary.LittleEndian, &opus)
 		if err == io.EOF || err == io.ErrUnexpectedEOF {
 			return
 		}
 		if err != nil {
-			fmt.Println("error reading from ff2opus stdout :", err)
+			fmt.Println("error reading from dca stdout :", err)
 			return
 		}
 
