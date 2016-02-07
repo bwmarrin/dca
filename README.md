@@ -41,7 +41,7 @@ Provided by Uniquoooo :) -- Very ROUGH DRAFT.
 2. brew install ffmpeg
 3. brew install opus
 4. brew install golang
-5. go get github.com/bwmarrin/dcaeee
+5. go get github.com/bwmarrin/dca
 ```
 
 
