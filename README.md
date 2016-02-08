@@ -47,6 +47,19 @@ Provided by Uniquoooo :) -- Very ROUGH DRAFT.
 
 ### Usage
 
+```
+Usage of ./dca:
+  -ac int
+    audio channels (default 2)
+  -ar int
+    audio sampling rate (default 48000)
+  -i string
+    infile (default pipe:0)
+```
+
+You may also pass pipe pcm16 audio into dca instead of providing an input file.
+
+
 ## Examples
 
 See the example folder.

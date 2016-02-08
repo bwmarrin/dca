@@ -39,7 +39,7 @@ var (
 // init configures and parses the command line arguments
 func init() {
 
-	flag.StringVar(&InFile, "i", "", "infile")
+	flag.StringVar(&InFile, "i", "pipe:0", "infile")
 	flag.IntVar(&Channels, "ac", 2, "audio channels")
 	flag.IntVar(&FrameRate, "ar", 48000, "audio sampling rate")
 	flag.Parse()
