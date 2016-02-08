@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"os/exec"
 	"runtime"
-	"sync"
 
 	"github.com/bwmarrin/discordgo"
 )
