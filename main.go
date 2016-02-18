@@ -31,8 +31,8 @@ var (
 	// Not sure what Discord uses here, probably voip
 	Application string
 
-	FrameSize int = 960                 // uint16 size of each audio frame
-	MaxBytes  int = (FrameSize * 2) * 2 // max size of opus data
+	FrameSize int // uint16 size of each audio frame
+	MaxBytes  int // max size of opus data
 
 	OpusEncoder *gopus.Encoder
 
@@ -55,10 +55,12 @@ func init() {
 	flag.StringVar(&InFile, "i", "pipe:0", "infile")
 	flag.IntVar(&Channels, "ac", 2, "audio channels")
 	flag.IntVar(&FrameRate, "ar", 48000, "audio sampling rate")
-	//	flag.IntVar(&FrameSize, "af", 960, "audio frame size can be 960 (20ms), 1920 (40ms), or 2880 (60ms)")
+	flag.IntVar(&FrameSize, "as", 960, "audio frame size can be 960 (20ms), 1920 (40ms), or 2880 (60ms)")
 	flag.IntVar(&Bitrate, "ab", 64, "audio encoding bitrate in kb/s can be 8 - 128")
 	flag.StringVar(&Application, "aa", "audio", "audio application can be voip, audio, or lowdelay")
 	flag.Parse()
+
+	MaxBytes = (FrameSize * Channels) * 2 // max size of opus data
 }
 
 // very simple program that wraps ffmpeg and outputs raw opus data frames
