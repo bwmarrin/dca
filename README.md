@@ -15,11 +15,11 @@ Join [#go_discordgo](https://discord.gg/0SBTUU1wZTWT6sqd) Discord chat channel
 for support.
 
 ## Features
-* Sampling rates from 8 to 48khz
-* Bit-rates from 6 kb/s to 510 kb/s
-* Support CBR and VBR support.
-* Support mono and stereo
-* Frame sizes from 10ms to 60ms
+* Stereo Audio
+* 48khz Sampling Rate
+* 20ms / 1920 byte audio frame size
+* Bit-rates from 8 kb/s to 128 kb/s
+* Optimization setting for VoIP, Audio, and Low Delay audio
 
 
 ## Getting Started
