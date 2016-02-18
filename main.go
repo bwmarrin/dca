@@ -15,8 +15,21 @@ import (
 
 // All global variables used within the program
 var (
-	Channels  int
+	// 1 for mono, 2 for stereo
+	Channels int
+
+	// Must be one of 8000, 12000, 16000, 24000, or 48000.
+	// Discord only uses 48000 currently.
 	FrameRate int
+
+	// Rates from 500 to 512000 bits per second are meaningful
+	// Discord only uses 8000 to 128000 and default is 64000
+	Bitrate int
+
+	// Must be one of voip, audio, or lowdelay.
+	// DCA defaults to audio which is ideal for music
+	// Not sure what Discord uses here, probably voip
+	Application string
 
 	FrameSize int = 960                 // uint16 size of each audio frame
 	MaxBytes  int = (FrameSize * 2) * 2 // max size of opus data
@@ -42,6 +55,9 @@ func init() {
 	flag.StringVar(&InFile, "i", "pipe:0", "infile")
 	flag.IntVar(&Channels, "ac", 2, "audio channels")
 	flag.IntVar(&FrameRate, "ar", 48000, "audio sampling rate")
+	//	flag.IntVar(&FrameSize, "af", 960, "audio frame size can be 960 (20ms), 1920 (40ms), or 2880 (60ms)")
+	flag.IntVar(&Bitrate, "ab", 64, "audio encoding bitrate in kb/s can be 8 - 128")
+	flag.StringVar(&Application, "aa", "audio", "audio application can be voip, audio, or lowdelay")
 	flag.Parse()
 }
 
@@ -88,6 +104,25 @@ func main() {
 	if err != nil {
 		fmt.Println("NewEncoder Error:", err)
 		return
+	}
+
+	// set opus encoding options
+	//	OpusEncoder.SetVbr(true)                // bool
+
+	if Bitrate < 1 || Bitrate > 512 {
+		Bitrate = 64 // Set to Discord default
+	}
+	OpusEncoder.SetBitrate(Bitrate * 1000)
+
+	switch Application {
+	case "voip":
+		OpusEncoder.SetApplication(gopus.Voip)
+	case "audio":
+		OpusEncoder.SetApplication(gopus.Audio)
+	case "lowdelay":
+		OpusEncoder.SetApplication(gopus.RestrictedLowDelay)
+	default:
+		OpusEncoder.SetApplication(gopus.Audio)
 	}
 
 	OutputChan = make(chan []byte, 1)
