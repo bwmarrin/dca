@@ -58,6 +58,12 @@ func init() {
 	flag.IntVar(&FrameSize, "as", 960, "audio frame size can be 960 (20ms), 1920 (40ms), or 2880 (60ms)")
 	flag.IntVar(&Bitrate, "ab", 64, "audio encoding bitrate in kb/s can be 8 - 128")
 	flag.StringVar(&Application, "aa", "audio", "audio application can be voip, audio, or lowdelay")
+
+	if len(os.Args) < 2 {
+		flag.Usage()
+		os.Exit(1)
+	}
+
 	flag.Parse()
 
 	MaxBytes = (FrameSize * Channels) * 2 // max size of opus data
@@ -71,28 +77,33 @@ func main() {
 	// BLOCK : Basic setup and validation
 	//////////////////////////////////////////////////////////////////////////
 
-	// figure out if we're reading in from a file or stdin.
-	fi, err := os.Stdin.Stat()
-	if err != nil {
-		fmt.Println(err)
-		return
+	// If only one argument provided assume it's a filename.
+	if len(os.Args) == 2 {
+		InFile = os.Args[1]
 	}
-	if (fi.Mode() & os.ModeCharDevice) == 0 {
-		InFile = "pipe:0"
-	} else {
 
-		if InFile == "" {
-			// TODO: possibly remove, here for legacy support
-			if len(os.Args) < 2 {
-				fmt.Println("Must supply the filename to process.")
-				return
-			}
-			InFile = os.Args[1]
+	// If reading from a file, verify it exists.
+	if InFile != "pipe:0" {
+
+		if _, err := os.Stat(InFile); os.IsNotExist(err) {
+			fmt.Println("error: infile does not exist")
+			flag.Usage()
+			return
+		}
+	}
+
+	// If reading from pipe, make sure pipe is open
+	if InFile == "pipe:0" {
+		fi, err := os.Stdin.Stat()
+		if err != nil {
+			fmt.Println(err)
+			return
 		}
 
-		// make sure infile exists
-		if _, err := os.Stat(InFile); os.IsNotExist(err) {
-			fmt.Println("infile does not exist")
+		if (fi.Mode() & os.ModeCharDevice) == 0 {
+		} else {
+			fmt.Println("error: stdin is not a pipe.")
+			flag.Usage()
 			return
 		}
 	}
