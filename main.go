@@ -34,6 +34,8 @@ var (
 	FrameSize int // uint16 size of each audio frame
 	MaxBytes  int // max size of opus data
 
+	Volume int // change audio volume (256=normal)
+
 	OpusEncoder *gopus.Encoder
 
 	InFile string
@@ -53,6 +55,7 @@ var (
 func init() {
 
 	flag.StringVar(&InFile, "i", "pipe:0", "infile")
+	flag.IntVar(&Volume, "vol", 256, "change audio volume (256=normal)")
 	flag.IntVar(&Channels, "ac", 2, "audio channels")
 	flag.IntVar(&FrameRate, "ar", 48000, "audio sampling rate")
 	flag.IntVar(&FrameSize, "as", 960, "audio frame size can be 960 (20ms), 1920 (40ms), or 2880 (60ms)")
@@ -172,7 +175,7 @@ func reader() {
 	if InFile != "pipe:0" {
 
 		// Create a shell command "object" to run.
-		ffmpeg := exec.Command("ffmpeg", "-i", InFile, "-f", "s16le", "-ar", strconv.Itoa(FrameRate), "-ac", strconv.Itoa(Channels), "pipe:1")
+		ffmpeg := exec.Command("ffmpeg", "-i", InFile, "-vol", strconv.Itoa(Volume), "-f", "s16le", "-ar", strconv.Itoa(FrameRate), "-ac", strconv.Itoa(Channels), "pipe:1")
 		stdout, err := ffmpeg.StdoutPipe()
 		if err != nil {
 			fmt.Println("StdoutPipe Error:", err)
