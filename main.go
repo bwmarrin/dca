@@ -169,8 +169,6 @@ func reader() {
 		wg.Done()
 	}()
 
-	InBuf := make([]int16, FrameSize*Channels)
-
 	// read from file
 	if InFile != "pipe:0" {
 
@@ -192,6 +190,7 @@ func reader() {
 		for {
 
 			// read data from ffmpeg stdout
+			InBuf := make([]int16, FrameSize*Channels)
 			err = binary.Read(stdout, binary.LittleEndian, &InBuf)
 			if err == io.EOF || err == io.ErrUnexpectedEOF {
 				return
@@ -212,6 +211,7 @@ func reader() {
 		for {
 
 			// read data from stdin
+			InBuf := make([]int16, FrameSize*Channels)
 			err = binary.Read(os.Stdin, binary.LittleEndian, &InBuf)
 			if err == io.EOF || err == io.ErrUnexpectedEOF {
 				return
