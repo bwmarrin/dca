@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/binary"
 	"flag"
 	"fmt"
@@ -141,8 +142,8 @@ func main() {
 		OpusEncoder.SetApplication(gopus.Audio)
 	}
 
-	OutputChan = make(chan []byte, 1)
-	EncodeChan = make(chan []int16, 1)
+	OutputChan = make(chan []byte, 10)
+	EncodeChan = make(chan []int16, 10)
 
 	//////////////////////////////////////////////////////////////////////////
 	// BLOCK : Start reader and writer workers
@@ -208,11 +209,15 @@ func reader() {
 
 	// read input from stdin pipe
 	if InFile == "pipe:0" {
+
+		// 16KB input buffer
+		rbuf := bufio.NewReaderSize(os.Stdin, 16384)
 		for {
 
 			// read data from stdin
 			InBuf := make([]int16, FrameSize*Channels)
-			err = binary.Read(os.Stdin, binary.LittleEndian, &InBuf)
+
+			err = binary.Read(rbuf, binary.LittleEndian, &InBuf)
 			if err == io.EOF || err == io.ErrUnexpectedEOF {
 				return
 			}
@@ -263,6 +268,8 @@ func writer() {
 	defer wg.Done()
 
 	var opuslen uint16
+	// 16KB output buffer
+	wbuf := bufio.NewWriterSize(os.Stdout, 16384)
 
 	for {
 		opus, ok := <-OutputChan
@@ -273,14 +280,14 @@ func writer() {
 
 		// write header
 		opuslen = uint16(len(opus))
-		err = binary.Write(os.Stdout, binary.LittleEndian, &opuslen)
+		err = binary.Write(wbuf, binary.LittleEndian, &opuslen)
 		if err != nil {
 			fmt.Println("error writing output: ", err)
 			return
 		}
 
 		// write opus data to stdout
-		err = binary.Write(os.Stdout, binary.LittleEndian, &opus)
+		err = binary.Write(wbuf, binary.LittleEndian, &opus)
 		if err != nil {
 			fmt.Println("error writing output: ", err)
 			return
