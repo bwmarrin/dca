@@ -3,6 +3,7 @@ package dca
 import (
 	"bufio"
 	"encoding/binary"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -10,6 +11,7 @@ import (
 	"os/exec"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/layeh/gopus"
 )
@@ -18,10 +20,19 @@ import (
 const (
 	// The current version of the DCA format
 	FormatVersion int8 = 1
+
+	// The current version of the DCA program
+	ProgramVersion string = "0.0.1"
+
+	// The URL to the GitHub repository of DCA
+	GitHubRepositoryURL string = "https://github.com/bwmarrin/dca"
 )
 
 // All global variables used within the program
 var (
+	// Metadata struct
+	Metadata MetadataStruct
+
 	// Magic bytes to write at the start of a DCA file
 	MagicBytes string = fmt.Sprintf("DCA%d", FormatVersion)
 
@@ -154,6 +165,31 @@ func main() {
 	OutputChan = make(chan []byte, 10)
 	EncodeChan = make(chan []int16, 10)
 
+	// Setup the metadata
+	Metadata := &MetadataStruct{
+		Dca: &DCAMetadata{
+			Version: FormatVersion,
+			Tool: &DCAToolMetadata{
+				Name: "dca",
+				Version: ProgramVersion,
+				Revision: "todo",
+				Url: GitHubRepositoryURL,
+				Author: "bwmarrin",
+			},
+		},
+		SongInfo: &SongMetadata{/* todo */},
+		Origin: &OriginMetadata{/* todo */},
+		Opus: &OpusMetadata{
+			SampleRate: FrameRate,
+			Application: Application,
+			FrameSize: FrameSize,
+			Channels: Channels,
+		},
+		ModifiedDate: time.Now().UnixNano() / 1000000,
+		CreationDate: time.Now().UnixNano() / 1000000,
+	}
+	_ = Metadata
+
 	//////////////////////////////////////////////////////////////////////////
 	// BLOCK : Start reader and writer workers
 	//////////////////////////////////////////////////////////////////////////
@@ -277,11 +313,33 @@ func writer() {
 	defer wg.Done()
 
 	var opuslen uint16
+	var jsonlen uint16
+	
 	// 16KB output buffer
 	wbuf := bufio.NewWriterSize(os.Stdout, 16384)
 
 	// write the magic bytes
 	fmt.Print(MagicBytes)
+
+	// encode and write json
+	json, err := json.Marshal(Metadata)
+	if err != nil {
+		fmt.Println("Failed to encode the Metadata JSON:", err)
+		return
+	}
+	jsonlen = uint16(len(json))
+
+	err = binary.Write(wbuf, binary.LittleEndian, &jsonlen)
+	if err != nil {
+		fmt.Println("error writing output: ", err)
+		return
+	}
+
+	err = binary.Write(wbuf, binary.LittleEndian, &json)
+	if err != nil {
+		fmt.Println("error writing output: ", err)
+		return
+	}
 
 	for {
 		opus, ok := <-OutputChan
