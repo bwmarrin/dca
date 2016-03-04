@@ -171,10 +171,10 @@ func main() {
 	EncodeChan = make(chan []int16, 10)
 
 	// Setup the metadata
-	Metadata := &MetadataStruct{
-		Dca: DCAMetadata{
+	Metadata = MetadataStruct{
+		Dca: &DCAMetadata{
 			Version: FormatVersion,
-			Tool: DCAToolMetadata{
+			Tool: &DCAToolMetadata{
 				Name: "dca",
 				Version: ProgramVersion,
 				Revision: "",
@@ -182,9 +182,9 @@ func main() {
 				Author: "bwmarrin",
 			},
 		},
-		SongInfo: SongMetadata{},
-		Origin: OriginMetadata{},
-		Opus: OpusMetadata{
+		SongInfo: &SongMetadata{},
+		Origin: &OriginMetadata{},
+		Opus: &OpusMetadata{
 			SampleRate: FrameRate,
 			Application: Application,
 			FrameSize: FrameSize,
@@ -233,7 +233,7 @@ func main() {
 			return
 		}
 
-		Metadata.SongInfo = SongMetadata{
+		Metadata.SongInfo = &SongMetadata{
 			Title: FFprobeData.Format.Tags.Title,
 			Artist: FFprobeData.Format.Tags.Artist,
 			Album: FFprobeData.Format.Tags.Album,
@@ -241,7 +241,7 @@ func main() {
 			Comments: "", // change later?
 		}
 
-		Metadata.Origin = OriginMetadata{
+		Metadata.Origin = &OriginMetadata{
 			Source: "file",
 			Bitrate: FFprobeData.Format.Bitrate,
 			Channels: Channels,

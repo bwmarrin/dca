@@ -4,10 +4,10 @@ package main
 // 
 // https://github.com/bwmarrin/dca/issues/5#issuecomment-189713886
 type MetadataStruct struct {
-    Dca             DCAMetadata     `json:"dca"`
-    SongInfo        SongMetadata    `json:"info"`
-    Origin          OriginMetadata  `json:"origin"`
-    Opus            OpusMetadata    `json:"opus"`
+    Dca             *DCAMetadata    `json:"dca"`
+    SongInfo        *SongMetadata   `json:"info"`
+    Origin          *OriginMetadata `json:"origin"`
+    Opus            *OpusMetadata   `json:"opus"`
 
     ModifiedDate    int64           `json:"modified_date"`
     CreationDate    int64           `json:"creation_date"`
@@ -18,7 +18,7 @@ type MetadataStruct struct {
 // Contains the DCA version.
 type DCAMetadata struct {
     Version int8                `json:"version"`
-    Tool    DCAToolMetadata     `json:"tool"`
+    Tool    *DCAToolMetadata    `json:"tool"`
 }
 
 // DCA tool metadata struct
@@ -71,7 +71,7 @@ type OpusMetadata struct {
 ////////////////////////////////////////////////////////
 
 type FFprobeMetadata struct {
-    Format  FFprobeFormat    `json:"format"`
+    Format  *FFprobeFormat  `json:"format"`
 }
 
 type FFprobeFormat struct {
@@ -86,7 +86,7 @@ type FFprobeFormat struct {
     Bitrate         string          `json:"bit_rate"`
     ProbeScore      int             `json:"probe_score"`
 
-    Tags            FFprobeTags     `json:"tags"`
+    Tags            *FFprobeTags    `json:"tags"`
 }
 
 type FFprobeTags struct {
