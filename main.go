@@ -370,7 +370,7 @@ func writer() {
 	defer wg.Done()
 
 	var opuslen int16
-	var jsonlen int16
+	var jsonlen int32
 
 	// 16KB output buffer
 	wbuf := bufio.NewWriterSize(os.Stdout, 16384)
@@ -385,7 +385,7 @@ func writer() {
 		return
 	}
 
-	jsonlen = int16(len(json))
+	jsonlen = int32(len(json))
 	err = binary.Write(wbuf, binary.LittleEndian, &jsonlen)
 	if err != nil {
 		fmt.Println("error writing output: ", err)
