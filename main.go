@@ -369,7 +369,7 @@ func writer() {
 
 	defer wg.Done()
 
-	var opuslen uint16
+	var opuslen int16
 	var jsonlen int16
 
 	// 16KB output buffer
@@ -378,7 +378,7 @@ func writer() {
 	// write the magic bytes
 	fmt.Print(MagicBytes)
 
-	// encode and write json
+	// encode and write json length
 	json, err := json.Marshal(Metadata)
 	if err != nil {
 		fmt.Println("Failed to encode the Metadata JSON:", err)
@@ -386,13 +386,13 @@ func writer() {
 	}
 
 	jsonlen = int16(len(json))
-
 	err = binary.Write(wbuf, binary.LittleEndian, &jsonlen)
 	if err != nil {
 		fmt.Println("error writing output: ", err)
 		return
 	}
 
+	// write the actual json
 	wbuf.Write(json)
 
 	for {
@@ -403,7 +403,7 @@ func writer() {
 		}
 
 		// write header
-		opuslen = uint16(len(opus))
+		opuslen = int16(len(opus))
 		err = binary.Write(wbuf, binary.LittleEndian, &opuslen)
 		if err != nil {
 			fmt.Println("error writing output: ", err)
