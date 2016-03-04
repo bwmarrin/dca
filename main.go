@@ -12,7 +12,6 @@ import (
 	"os/exec"
 	"strconv"
 	"sync"
-	"time"
 
 	"github.com/layeh/gopus"
 )
@@ -190,8 +189,6 @@ func main() {
 			FrameSize: FrameSize,
 			Channels: Channels,
 		},
-		ModifiedDate: time.Now().UnixNano() / 1000000,
-		CreationDate: time.Now().UnixNano() / 1000000,
 	}
 	_ = Metadata
 

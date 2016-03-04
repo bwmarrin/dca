@@ -8,9 +8,6 @@ type MetadataStruct struct {
     SongInfo        *SongMetadata   `json:"info"`
     Origin          *OriginMetadata `json:"origin"`
     Opus            *OpusMetadata   `json:"opus"`
-
-    ModifiedDate    int64           `json:"modified_date"`
-    CreationDate    int64           `json:"creation_date"`
 }
 
 // DCA metadata struct
