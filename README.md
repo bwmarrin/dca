@@ -136,7 +136,7 @@ Here is the structure of the JSON metadata:
         "url": "https://www.dropbox.com/s/bwc73zb44o3tj3m/Out%20of%20Control.mp3?dl=0" // A URL or path to the file.
     },
     "opus": { // Information about the Opus encoder.
-        "bitrate": 64000, // The bitrate the opus was encoded with.
+        "abr": 64000, // The bitrate the opus was encoded with.
         "sample_rate": 48000, // The sample rate the opus was encoded with.
         "mode": "voip", // The application mode the opus was encoded with.
         "frame_size": 960, // The frame size the opus was encoded with.
