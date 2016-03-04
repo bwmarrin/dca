@@ -262,14 +262,12 @@ func main() {
 		}
 
 		err = cover.Wait()
-		if err != nil {
-			fmt.Println("FFmpeg Error:", err)
-			return
+		if err == nil {
+			encodedImage := base64.StdEncoding.EncodeToString(CmdBuf.Bytes())
+
+			Metadata.SongInfo.Cover = encodedImage
 		}
-
-		encodedImage := base64.StdEncoding.EncodeToString(CmdBuf.Bytes())
-
-		Metadata.SongInfo.Cover = encodedImage
+		
 		CmdBuf.Reset()
 	}
 
