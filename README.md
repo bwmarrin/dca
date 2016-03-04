@@ -102,7 +102,7 @@ Here is the structure of A DCA frame:
 |---|---|----------------|
 | Frame |  Opus encoded  |
 | Size  |      data      |
-| uint16|                |
+| int16 |                |
 ```
 
 ## JSON Structure
