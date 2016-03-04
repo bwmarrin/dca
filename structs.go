@@ -47,7 +47,7 @@ type SongMetadata struct {
 // audio bitrate, channels and original encoding.
 type OriginMetadata struct {
     Source      string  `json:"source"`
-    Bitrate     int     `json:"bitrate"`
+    Bitrate     int     `json:"abr"`
     Channels    int     `json:"channels"`
     Encoding    string  `json:"encoding"`
     Url         string  `json:"url"`
@@ -58,7 +58,7 @@ type OriginMetadata struct {
 // Contains information about how the file was encoded
 // with Opus.
 type OpusMetadata struct {
-    Bitrate     int     `json:"bitrate"`
+    Bitrate     int     `json:"abr"`
     SampleRate  int     `json:"sample_rate"`
     Application string  `json:"mode"`
     FrameSize   int     `json:"frame_size"`
