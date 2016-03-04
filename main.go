@@ -293,6 +293,13 @@ func main() {
 
 		CmdBuf.Reset()
 		PngBuf.Reset()
+	} else {
+		Metadata.Origin = &OriginMetadata{
+			Source: "pipe",
+			Channels: Channels,
+			Encoding: "pcm16/s16le",
+			Url: "pipe:0",
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////
