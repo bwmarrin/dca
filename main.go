@@ -172,9 +172,9 @@ func main() {
 
 	// Setup the metadata
 	Metadata := &MetadataStruct{
-		Dca: &DCAMetadata{
+		Dca: DCAMetadata{
 			Version: FormatVersion,
-			Tool: &DCAToolMetadata{
+			Tool: DCAToolMetadata{
 				Name: "dca",
 				Version: ProgramVersion,
 				Revision: "",
@@ -182,9 +182,9 @@ func main() {
 				Author: "bwmarrin",
 			},
 		},
-		SongInfo: &SongMetadata{},
-		Origin: &OriginMetadata{},
-		Opus: &OpusMetadata{
+		SongInfo: SongMetadata{},
+		Origin: OriginMetadata{},
+		Opus: OpusMetadata{
 			SampleRate: FrameRate,
 			Application: Application,
 			FrameSize: FrameSize,
@@ -200,18 +200,15 @@ func main() {
 	git.Stdout = &CmdBuf
 
 	err = git.Start()
-	if err != nil {
-		fmt.Println("RunStart Error:", err)
-		return
-	}
+	if err == nil {
+		err = git.Wait()
+		if err != nil {
+			fmt.Println("Git Error:", err)
+			return
+		}
 
-	err = git.Wait()
-	if err != nil {
-		fmt.Println("Git Error:", err)
-		return
+		Metadata.Dca.Tool.Revision = CmdBuf.String()
 	}
-
-	Metadata.Dca.Tool.Revision = CmdBuf.String()
 
 	// get ffprobe data
 	if InFile != "pipe:0" {
@@ -236,7 +233,7 @@ func main() {
 			return
 		}
 
-		Metadata.SongInfo = &SongMetadata{
+		Metadata.SongInfo = SongMetadata{
 			Title: FFprobeData.Format.Tags.Title,
 			Artist: FFprobeData.Format.Tags.Artist,
 			Album: FFprobeData.Format.Tags.Album,
@@ -244,7 +241,7 @@ func main() {
 			Comments: "", // change later?
 		}
 
-		Metadata.Origin = &OriginMetadata{
+		Metadata.Origin = OriginMetadata{
 			Source: "file",
 			Bitrate: FFprobeData.Format.Bitrate,
 			Channels: Channels,
@@ -376,7 +373,7 @@ func writer() {
 	defer wg.Done()
 
 	var opuslen uint16
-	var jsonlen uint16
+	var jsonlen int16
 
 	// 16KB output buffer
 	wbuf := bufio.NewWriterSize(os.Stdout, 16384)
@@ -390,7 +387,8 @@ func writer() {
 		fmt.Println("Failed to encode the Metadata JSON:", err)
 		return
 	}
-	jsonlen = uint16(len(json))
+
+	jsonlen = int16(len(json))
 
 	err = binary.Write(wbuf, binary.LittleEndian, &jsonlen)
 	if err != nil {
@@ -398,11 +396,7 @@ func writer() {
 		return
 	}
 
-	err = binary.Write(wbuf, binary.LittleEndian, &json)
-	if err != nil {
-		fmt.Println("error writing output: ", err)
-		return
-	}
+	wbuf.Write(json)
 
 	for {
 		opus, ok := <-OutputChan
