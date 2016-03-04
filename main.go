@@ -185,6 +185,7 @@ func main() {
 		SongInfo: &SongMetadata{},
 		Origin: &OriginMetadata{},
 		Opus: &OpusMetadata{
+			Bitrate: Bitrate * 1000,
 			SampleRate: FrameRate,
 			Application: Application,
 			FrameSize: FrameSize,
@@ -267,7 +268,7 @@ func main() {
 
 			Metadata.SongInfo.Cover = encodedImage
 		}
-		
+
 		CmdBuf.Reset()
 	}
 
