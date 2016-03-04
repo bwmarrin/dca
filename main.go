@@ -14,8 +14,17 @@ import (
 	"github.com/layeh/gopus"
 )
 
+// Define constants
+const (
+	// The current version of the DCA format
+	FormatVersion int8 = 1
+)
+
 // All global variables used within the program
 var (
+	// Magic bytes to write at the start of a DCA file
+	MagicBytes string = fmt.Sprintf("DCA%d", FormatVersion)
+
 	// 1 for mono, 2 for stereo
 	Channels int
 
@@ -270,6 +279,9 @@ func writer() {
 	var opuslen uint16
 	// 16KB output buffer
 	wbuf := bufio.NewWriterSize(os.Stdout, 16384)
+
+	// write the magic bytes
+	fmt.Print(MagicBytes)
 
 	for {
 		opus, ok := <-OutputChan
