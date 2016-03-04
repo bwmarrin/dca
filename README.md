@@ -44,6 +44,7 @@ Profit!
 
 ### Windows (Pacman)
 Provided by iopred.
+First, install msys2 then install pacman
 ```
 $ pacman -S mingw64/mingw-w64-x86_64-pkg-config
 $ pacman -S mingw64/mingw-w64-x86_64-opusfile
