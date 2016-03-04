@@ -83,3 +83,23 @@ happen.  In other words, probably not worth your time right now :)
 
 See [this chart](https://abal.moe/Discord/Libraries.html) for a feature 
 comparison and list of other Discord API libraries.
+
+## File Structure
+
+Here is the structure of a DCA file header:
+
+```
+| 0 | 1 | 2 |         3        |  4  |  5  | 6 - JSON Size |
+|---|---|---|------------------|-----------|---------------|
+|    DCA    |  Version Number  | JSON Size | JSON Metadata |
+|  Magic Header with Version   |           |               |
+```
+
+Here is the structure of A DCA frame:
+
+```
+| 0 | 1 | 2 - Frame Size |
+|---|---|----------------|
+| Frame |  Opus encoded  |
+| Size  |      data      |
+```
