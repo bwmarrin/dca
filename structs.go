@@ -47,7 +47,7 @@ type SongMetadata struct {
 // audio bitrate, channels and original encoding.
 type OriginMetadata struct {
     Source      string  `json:"source"`
-    Bitrate     string  `json:"bitrate"`
+    Bitrate     int     `json:"bitrate"`
     Channels    int     `json:"channels"`
     Encoding    string  `json:"encoding"`
     Url         string  `json:"url"`

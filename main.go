@@ -239,6 +239,12 @@ func main() {
 			return
 		}
 
+		bitrateInt, err := strconv.Atoi(FFprobeData.Format.Bitrate)
+		if err != nil {
+			fmt.Println("Could not convert bitrate to int:", err)
+			return
+		}
+
 		Metadata.SongInfo = &SongMetadata{
 			Title: FFprobeData.Format.Tags.Title,
 			Artist: FFprobeData.Format.Tags.Artist,
@@ -249,7 +255,7 @@ func main() {
 
 		Metadata.Origin = &OriginMetadata{
 			Source: "file",
-			Bitrate: FFprobeData.Format.Bitrate,
+			Bitrate: bitrateInt,
 			Channels: Channels,
 			Encoding: FFprobeData.Format.FormatLongName,
 			Url: FFprobeData.Format.FileName,
