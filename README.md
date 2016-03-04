@@ -89,10 +89,10 @@ comparison and list of other Discord API libraries.
 Here is the structure of a DCA file header:
 
 ```
-| 0 | 1 | 2 |         3        |  4  |  5  | 6 - JSON Size |
-|---|---|---|------------------|-----------|---------------|
-|    DCA    |  Version Number  | JSON Size | JSON Metadata |
-|  Magic Header with Version   |           |               |
+| 0 | 1 | 2 |         3        |  4  |  5  |  6  |  7  | 8 - JSON Size |
+|---|---|---|------------------|-----------------------|---------------|
+|    DCA    |  Version Number  |       JSON Size       | JSON Metadata |
+|  Magic Header with Version   |      signed int32     |               |
 ```
 
 Here is the structure of A DCA frame:
@@ -102,6 +102,7 @@ Here is the structure of A DCA frame:
 |---|---|----------------|
 | Frame |  Opus encoded  |
 | Size  |      data      |
+| uint16|                |
 ```
 
 ## JSON Structure
