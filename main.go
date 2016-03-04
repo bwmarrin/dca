@@ -13,6 +13,8 @@ import (
 	"os/exec"
 	"strconv"
 	"sync"
+	"image/png"
+	"image/jpeg"
 
 	"github.com/layeh/gopus"
 )
@@ -33,6 +35,7 @@ const (
 var (
 	// Buffer for some commands
 	CmdBuf bytes.Buffer
+	PngBuf bytes.Buffer
 
 	// Metadata structures
 	Metadata	MetadataStruct
@@ -65,6 +68,7 @@ var (
 	OpusEncoder *gopus.Encoder
 
 	InFile string
+	CoverFormat string = "jpeg"
 
 	OutFile string = "pipe:1"
 	OutBuf  []byte
@@ -87,6 +91,7 @@ func init() {
 	flag.IntVar(&FrameSize, "as", 960, "audio frame size can be 960 (20ms), 1920 (40ms), or 2880 (60ms)")
 	flag.IntVar(&Bitrate, "ab", 64, "audio encoding bitrate in kb/s can be 8 - 128")
 	flag.StringVar(&Application, "aa", "audio", "audio application can be voip, audio, or lowdelay")
+	flag.StringVar(&CoverFormat, "format", "jpeg", "format the cover art will be encoded with")
 
 	if len(os.Args) < 2 {
 		flag.Usage()
@@ -264,12 +269,24 @@ func main() {
 
 		err = cover.Wait()
 		if err == nil {
-			encodedImage := base64.StdEncoding.EncodeToString(CmdBuf.Bytes())
+			buf := bytes.NewBufferString(CmdBuf.String())
 
-			Metadata.SongInfo.Cover = encodedImage
+			if CoverFormat == "png" {
+				img, err := jpeg.Decode(buf)
+				if err == nil { // silently drop it, no image
+					err = png.Encode(&PngBuf, img)
+					if err == nil {
+						Metadata.SongInfo.Cover = base64.StdEncoding.EncodeToString(PngBuf.Bytes())
+					}
+				}
+			} else {
+				encodedImage := base64.StdEncoding.EncodeToString(CmdBuf.Bytes())
+				Metadata.SongInfo.Cover = encodedImage
+			}
 		}
 
 		CmdBuf.Reset()
+		PngBuf.Reset()
 	}
 
 	//////////////////////////////////////////////////////////////////////////
