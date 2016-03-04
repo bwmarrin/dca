@@ -258,7 +258,6 @@ func main() {
 			Bitrate: bitrateInt,
 			Channels: Channels,
 			Encoding: FFprobeData.Format.FormatLongName,
-			Url: FFprobeData.Format.FileName,
 		}
 
 		CmdBuf.Reset()
@@ -298,7 +297,6 @@ func main() {
 			Source: "pipe",
 			Channels: Channels,
 			Encoding: "pcm16/s16le",
-			Url: "pipe:0",
 		}
 	}
 
