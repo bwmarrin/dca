@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"encoding/binary"
 	"encoding/json"
+	"encoding/base64"
 	"flag"
 	"fmt"
 	"io"
@@ -207,6 +208,8 @@ func main() {
 		Metadata.Dca.Tool.Revision = CmdBuf.String()
 	}
 
+	CmdBuf.Reset()
+
 	// get ffprobe data
 	if InFile != "pipe:0" {
 		ffprobe := exec.Command("ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", InFile)
@@ -245,6 +248,29 @@ func main() {
 			Encoding: FFprobeData.Format.FormatLongName,
 			Url: FFprobeData.Format.FileName,
 		}
+
+		CmdBuf.Reset()
+
+		// get cover art
+		cover := exec.Command("ffmpeg", "-loglevel", "0", "-i", InFile, "-f", "singlejpeg", "pipe:1")
+		cover.Stdout = &CmdBuf
+
+		err = cover.Start()
+		if err != nil {
+			fmt.Println("RunStart Error:", err)
+			return
+		}
+
+		err = cover.Wait()
+		if err != nil {
+			fmt.Println("FFmpeg Error:", err)
+			return
+		}
+
+		encodedImage := base64.StdEncoding.EncodeToString(CmdBuf.Bytes())
+
+		Metadata.SongInfo.Cover = encodedImage
+		CmdBuf.Reset()
 	}
 
 	//////////////////////////////////////////////////////////////////////////

@@ -38,6 +38,7 @@ type SongMetadata struct {
     Album       string  `json:"album"`
     Genre       string  `json:"genre"`
     Comments    string  `json:"comments"`
+    Cover       string  `json:"cover"`
 }
 
 // Origin information metadata struct
