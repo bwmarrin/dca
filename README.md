@@ -42,6 +42,15 @@ Run go build
 Profit!
 ```
 
+### Windows (Pacman)
+Provided by iopred.
+```
+$ pacman -S mingw64/mingw-w64-x86_64-pkg-config
+$ pacman -S mingw64/mingw-w64-x86_64-opusfile
+$ go get github.com/bwmarrin/dca
+$ go install github.com/bwmarrin/dca
+```
+
 ### OS X
 Provided by Uniquoooo :) -- Very ROUGH DRAFT.
 ```
