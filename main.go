@@ -31,6 +31,9 @@ const (
 
 // All global variables used within the program
 var (
+	// Buffer for some commands
+	CmdBuf bytes.Buffer
+
 	// Metadata structures
 	Metadata	MetadataStruct
 	FFprobeData FFprobeMetadata
@@ -174,7 +177,7 @@ func main() {
 			Tool: &DCAToolMetadata{
 				Name: "dca",
 				Version: ProgramVersion,
-				Revision: "todo",
+				Revision: "",
 				Url: GitHubRepositoryURL,
 				Author: "bwmarrin",
 			},
@@ -192,11 +195,28 @@ func main() {
 	}
 	_ = Metadata
 
+	// try get the git revision
+	git := exec.Command("cd $GOPATH/src/github.com/bwmarrin/dca && git rev-parse HEAD")
+	git.Stdout = &CmdBuf
+
+	err = git.Start()
+	if err != nil {
+		fmt.Println("RunStart Error:", err)
+		return
+	}
+
+	err = git.Wait()
+	if err != nil {
+		fmt.Println("Git Error:", err)
+		return
+	}
+
+	Metadata.Dca.Tool.Revision = CmdBuf.String()
+
 	// get ffprobe data
 	if InFile != "pipe:0" {
-		var outbuf bytes.Buffer
 		ffprobe := exec.Command("ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", InFile)
-		ffprobe.Stdout = &outbuf
+		ffprobe.Stdout = &CmdBuf
 
 		err = ffprobe.Start()
 		if err != nil {
@@ -210,7 +230,7 @@ func main() {
 			return
 		}
 
-		err := json.Unmarshal(outbuf.Bytes(), &FFprobeData)
+		err = json.Unmarshal(CmdBuf.Bytes(), &FFprobeData)
 		if err != nil {
 			fmt.Println("Erorr unmarshaling the FFprobe JSON:", err)
 			return
