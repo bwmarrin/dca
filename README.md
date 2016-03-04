@@ -103,3 +103,43 @@ Here is the structure of A DCA frame:
 | Frame |  Opus encoded  |
 | Size  |      data      |
 ```
+
+## JSON Structure
+
+Here is the structure of the JSON metadata:
+
+```
+{
+    "dca": { // Contains information about the DCA encoder
+        "version": 1, // The DCA format version that the file is encoded with.
+        "tool": { // Information about the tool that encoded the DCA file.
+            "name": "dca-encoder", // The name of the tool.
+            "version": "1.0.0", // The version of the tool.
+            "rev": "bwmarrin/dca#32361ee92fcbd0e404b2be18adf497a45fef4a5f", // The Git revision of the tool.
+            "url": "https://github.com/bwmarrin/dca/", // A URL to the tool.
+            "author": "bwmarrin" // The author of the tool.
+        }
+    },
+    "info": { // Information about the song from FFmpeg. Most of this is obvious.
+        "title": "Out of Control", 
+        "artist": "Nothing's Carved in Stone",
+        "album": "Revolt",
+        "genre": "jrock",
+        "comments": "Second Opening for the anime Psycho Pass",
+        "cover": "" // A Base64 encoded JPEG image of the songs cover art.
+    },
+    "origin": { // Information about where the song came from.
+        "source": "file", // Whether it was streamed, from a file etc.
+        "abr": 192000, // The original bitrate of the file.
+        "channels": 2, // The original amount of channels of the file.
+        "encoding": "MP3/MPEG-2L3", // The original encoding of the file.
+        "url": "https://www.dropbox.com/s/bwc73zb44o3tj3m/Out%20of%20Control.mp3?dl=0" // A URL or path to the file.
+    },
+    "opus": { // Information about the Opus encoder.
+        "sample_rate": 48000, // The sample rate the opus was encoded with.
+        "mode": "voip", // The application mode the opus was encoded with.
+        "frame_size": 960, // The frame size the opus was encoded with.
+        "channels": 2 // The amount of channels the opus was encoded with.
+    }
+}
+```
