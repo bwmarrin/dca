@@ -1,6 +1,7 @@
-package dca
+package main
 
 import (
+	"bytes"
 	"bufio"
 	"encoding/binary"
 	"encoding/json"
@@ -30,8 +31,9 @@ const (
 
 // All global variables used within the program
 var (
-	// Metadata struct
-	Metadata MetadataStruct
+	// Metadata structures
+	Metadata	MetadataStruct
+	FFprobeData FFprobeMetadata
 
 	// Magic bytes to write at the start of a DCA file
 	MagicBytes string = fmt.Sprintf("DCA%d", FormatVersion)
@@ -177,8 +179,8 @@ func main() {
 				Author: "bwmarrin",
 			},
 		},
-		SongInfo: &SongMetadata{/* todo */},
-		Origin: &OriginMetadata{/* todo */},
+		SongInfo: &SongMetadata{},
+		Origin: &OriginMetadata{},
 		Opus: &OpusMetadata{
 			SampleRate: FrameRate,
 			Application: Application,
@@ -189,6 +191,47 @@ func main() {
 		CreationDate: time.Now().UnixNano() / 1000000,
 	}
 	_ = Metadata
+
+	// get ffprobe data
+	if InFile != "pipe:0" {
+		var outbuf bytes.Buffer
+		ffprobe := exec.Command("ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", InFile)
+		ffprobe.Stdout = &outbuf
+
+		err = ffprobe.Start()
+		if err != nil {
+			fmt.Println("RunStart Error:", err)
+			return
+		}
+
+		err = ffprobe.Wait()
+		if err != nil {
+			fmt.Println("FFprobe Error:", err)
+			return
+		}
+
+		err := json.Unmarshal(outbuf.Bytes(), &FFprobeData)
+		if err != nil {
+			fmt.Println("Erorr unmarshaling the FFprobe JSON:", err)
+			return
+		}
+
+		Metadata.SongInfo = &SongMetadata{
+			Title: FFprobeData.Format.Tags.Title,
+			Artist: FFprobeData.Format.Tags.Artist,
+			Album: FFprobeData.Format.Tags.Album,
+			Genre: FFprobeData.Format.Tags.Genre,
+			Comments: "", // change later?
+		}
+
+		Metadata.Origin = &OriginMetadata{
+			Source: "file",
+			Bitrate: FFprobeData.Format.Bitrate,
+			Channels: Channels,
+			Encoding: FFprobeData.Format.FormatLongName,
+			Url: FFprobeData.Format.FileName,
+		}
+	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// BLOCK : Start reader and writer workers
@@ -314,7 +357,7 @@ func writer() {
 
 	var opuslen uint16
 	var jsonlen uint16
-	
+
 	// 16KB output buffer
 	wbuf := bufio.NewWriterSize(os.Stdout, 16384)
 

@@ -1,4 +1,4 @@
-package dca
+package main
 
 // Base metadata struct
 // 
@@ -49,7 +49,7 @@ type SongMetadata struct {
 // audio bitrate, channels and original encoding.
 type OriginMetadata struct {
     Source      string  `json:"source"`
-    Bitrate     int     `json:"bitrate"`
+    Bitrate     string  `json:"bitrate"`
     Channels    int     `json:"channels"`
     Encoding    string  `json:"encoding"`
     Url         string  `json:"url"`
@@ -64,4 +64,37 @@ type OpusMetadata struct {
     Application string  `json:"mode"`
     FrameSize   int     `json:"frame_size"`
     Channels    int     `json:"channels"`
+}
+
+////////////////////////////////////////////////////////
+/// FFprobe Structures
+////////////////////////////////////////////////////////
+
+type FFprobeMetadata struct {
+    Format  *FFprobeFormat   `json:"format"`
+}
+
+type FFprobeFormat struct {
+    FileName        string          `json:"filename"`
+    NumStreams      int             `json:"nb_streams"`
+    NumPrograms     int             `json:"nb_programs"`
+    FormatName      string          `json:"format_name"`
+    FormatLongName  string          `json:"format_long_name"`
+    StartTime       string          `json:"start_time"`
+    Duration        string          `json:"duration"`
+    Size            string          `json:"size"`
+    Bitrate         string          `json:"bit_rate"`
+    ProbeScore      string          `json:"probe_score"`
+
+    Tags            *FFprobeTags    `json:"tags"`
+}
+
+type FFprobeTags struct {
+    Date        string  `json:"date"`
+    Track       string  `json:"track"`
+    Artist      string  `json:"artist"`
+    Genre       string  `json:"genre"`
+    Title       string  `json:"title"`
+    Album       string  `json:"album"`
+    Compilation string  `json:"compilation"`
 }
