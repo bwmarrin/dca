@@ -10,6 +10,7 @@ as a way to generate the opus audio data from any standard audio file.
 You can also pipe the output of this program to create a .dca file for later use.
 
 * See [Discordgo](https://github.com/bwmarrin/discordgo) for Discord API bindings in Go.
+* See the [wiki](https://github.com/bwmarrin/dca/wiki/DCA1-specification-draft) for more information on the DCA1 standard.
 
 Join [#go_discordgo](https://discord.gg/0SBTUU1wZTWT6sqd) Discord chat channel 
 for support.
