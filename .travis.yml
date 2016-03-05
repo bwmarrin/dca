@@ -15,3 +15,5 @@ before_install:
 install:
     - go get github.com/bwmarrin/dca
     - go get -v .
+script:
+    - go build
