@@ -8,9 +8,10 @@ before_install:
     - wget http://downloads.xiph.org/releases/opus/opus-1.1.2.tar.gz
     - tar -zxvf opus-1.1.2.tar.gz > /dev/null
     - cd opus-1.1.2
-    - ./configure > /dev/null
-    - make > /dev/null
-    - sudo make install > /dev/null
+    - ./configure
+    - make
+    - sudo make install
+    - cd ../
 install:
     - go get github.com/bwmarrin/dca
     - go get -v .
