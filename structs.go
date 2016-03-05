@@ -8,6 +8,7 @@ type MetadataStruct struct {
     SongInfo        *SongMetadata   `json:"info"`
     Origin          *OriginMetadata `json:"origin"`
     Opus            *OpusMetadata   `json:"opus"`
+    Extra           *ExtraMetadata  `json:"extra"`
 }
 
 // DCA metadata struct
@@ -63,6 +64,9 @@ type OpusMetadata struct {
     FrameSize   int     `json:"frame_size"`
     Channels    int     `json:"channels"`
 }
+
+// Extra metadata struct
+type ExtraMetadata struct {}
 
 ////////////////////////////////////////////////////////
 /// FFprobe Structures

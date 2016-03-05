@@ -195,6 +195,7 @@ func main() {
 			FrameSize: FrameSize,
 			Channels: Channels,
 		},
+		Extra: &ExtraMetadata{},
 	}
 	_ = Metadata
 
