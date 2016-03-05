@@ -24,7 +24,6 @@ type DCAMetadata struct {
 type DCAToolMetadata struct {
     Name        string  `json:"name"`
     Version     string  `json:"version"`
-    Revision    string  `json:"rev"`
     Url         string  `json:"url"`
     Author      string  `json:"author"`
 }

@@ -182,7 +182,6 @@ func main() {
 			Tool: &DCAToolMetadata{
 				Name: "dca",
 				Version: ProgramVersion,
-				Revision: "",
 				Url: GitHubRepositoryURL,
 				Author: "bwmarrin",
 			},
@@ -198,23 +197,6 @@ func main() {
 		},
 	}
 	_ = Metadata
-
-	// try get the git revision
-	git := exec.Command("cd $GOPATH/src/github.com/bwmarrin/dca && git rev-parse HEAD")
-	git.Stdout = &CmdBuf
-
-	err = git.Start()
-	if err == nil {
-		err = git.Wait()
-		if err != nil {
-			fmt.Println("Git Error:", err)
-			return
-		}
-
-		Metadata.Dca.Tool.Revision = CmdBuf.String()
-	}
-
-	CmdBuf.Reset()
 
 	// get ffprobe data
 	if InFile != "pipe:0" {
