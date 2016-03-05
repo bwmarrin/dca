@@ -37,6 +37,8 @@ var (
 	CmdBuf bytes.Buffer
 	PngBuf bytes.Buffer
 
+	CoverImage string
+
 	// Metadata structures
 	Metadata	MetadataStruct
 	FFprobeData FFprobeMetadata
@@ -264,13 +266,14 @@ func main() {
 				if err == nil { // silently drop it, no image
 					err = png.Encode(&PngBuf, img)
 					if err == nil {
-						Metadata.SongInfo.Cover = base64.StdEncoding.EncodeToString(PngBuf.Bytes())
+						CoverImage = base64.StdEncoding.EncodeToString(PngBuf.Bytes())
 					}
 				}
 			} else {
-				encodedImage := base64.StdEncoding.EncodeToString(CmdBuf.Bytes())
-				Metadata.SongInfo.Cover = encodedImage
+				CoverImage = base64.StdEncoding.EncodeToString(CmdBuf.Bytes())
 			}
+
+			Metadata.SongInfo.Cover = &CoverImage
 		}
 
 		CmdBuf.Reset()
