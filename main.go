@@ -91,7 +91,7 @@ func init() {
 	flag.IntVar(&FrameSize, "as", 960, "audio frame size can be 960 (20ms), 1920 (40ms), or 2880 (60ms)")
 	flag.IntVar(&Bitrate, "ab", 64, "audio encoding bitrate in kb/s can be 8 - 128")
 	flag.StringVar(&Application, "aa", "audio", "audio application can be voip, audio, or lowdelay")
-	flag.StringVar(&CoverFormat, "format", "jpeg", "format the cover art will be encoded with")
+	flag.StringVar(&CoverFormat, "cf", "jpeg", "format the cover art will be encoded with")
 
 	if len(os.Args) < 2 {
 		flag.Usage()
