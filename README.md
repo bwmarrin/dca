@@ -28,6 +28,33 @@ for support.
 
 dca has been tested to compile on FreeBSD 10 (Go 1.5.1), OS X 10.10, Windows 10.
 
+### Ubuntu 14.04.3 LTS
+Provided by Uniquoooo
+```
+# basics
+sudo apt-get update
+sudo apt-get install golang git gcc make pkg-config --yes
+# golang
+mkdir $HOME/go
+echo 'export GOPATH=$HOME/go' >> ~/.bashrc
+echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.bashrc
+source ~/.bashrc
+# ffmpeg
+sudo add-apt-repository ppa:kirillshkrogalev/ffmpeg-next
+sudo apt-get update
+sudo apt-get install ffmpeg --yes
+# opus
+wget http://downloads.xiph.org/releases/opus/opus-1.1.2.tar.gz
+tar -zxvf opus-1.1.2.tar.gz
+cd opus-1.1.2
+./configure
+make && sudo make install
+cd ../
+rm -r opus-1.1.2 opus-1.1.2.tar.gz
+# install dca
+go get github.com/bwmarrin/dca
+```
+
 
 ### Windows
 Provided by Axiom :) -- Very ROUGH DRAFT
