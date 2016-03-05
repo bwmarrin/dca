@@ -94,12 +94,22 @@ Provided by Uniquoooo :) -- Very ROUGH DRAFT.
 
 ```
 Usage of ./dca:
+  -aa string
+        audio application can be voip, audio, or lowdelay (default "audio")
+  -ab int
+        audio encoding bitrate in kb/s can be 8 - 128 (default 64)
   -ac int
-    audio channels (default 2)
+        audio channels (default 2)
   -ar int
-    audio sampling rate (default 48000)
+        audio sampling rate (default 48000)
+  -as int
+        audio frame size can be 960 (20ms), 1920 (40ms), or 2880 (60ms) (default 960)
+  -cf string
+        format the cover art will be encoded with (default "jpeg")
   -i string
-    infile (default pipe:0)
+        infile (default "pipe:0")
+  -vol int
+        change audio volume (256=normal) (default 256)
 ```
 
 You may also pass pipe pcm16 audio into dca instead of providing an input file.
