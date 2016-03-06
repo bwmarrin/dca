@@ -30,7 +30,9 @@ for support.
 dca has been tested to compile on FreeBSD 10 (Go 1.5.1), OS X 10.10, Windows 10.
 
 ### Ubuntu 14.04.3 LTS
+
 Provided by Uniquoooo
+
 ```
 # basics
 sudo apt-get update
@@ -56,9 +58,12 @@ rm -r opus-1.1.2 opus-1.1.2.tar.gz
 go get github.com/bwmarrin/dca
 ```
 
+Note: If Go complains that GOPATH is not defined, try run `source ~/.bashrc` and then `go get github.com/bwmarrin/dca`.
 
 ### Windows
+
 Provided by Axiom :) -- Very ROUGH DRAFT
+
 ```
 Install Go for Windows
 Setup gopath to some empty folder (for example, I made mine C:\gopath)
@@ -71,8 +76,10 @@ Profit!
 ```
 
 ### Windows (Pacman)
+
 Provided by iopred.
 First, install msys2 then install pacman
+
 ```
 $ pacman -S mingw64/mingw-w64-x86_64-pkg-config
 $ pacman -S mingw64/mingw-w64-x86_64-opusfile
@@ -81,13 +88,14 @@ $ go install github.com/bwmarrin/dca
 ```
 
 ### OS X
-Provided by Uniquoooo :) -- Very ROUGH DRAFT.
+
+Provided by Uniquoooo
+
+This way uses Homebrew, download it from [here.](http://brew.sh/)
+
 ```
-1. get homebrew
-2. brew install ffmpeg
-3. brew install opus
-4. brew install golang
-5. go get github.com/bwmarrin/dca
+$ brew install ffmpeg opus golang
+$ go get github.com/bwmarrin/dca
 ```
 
 
