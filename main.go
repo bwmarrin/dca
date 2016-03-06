@@ -1,20 +1,20 @@
 package main
 
 import (
-	"bytes"
 	"bufio"
+	"bytes"
+	"encoding/base64"
 	"encoding/binary"
 	"encoding/json"
-	"encoding/base64"
 	"flag"
 	"fmt"
+	"image/jpeg"
+	"image/png"
 	"io"
 	"os"
 	"os/exec"
 	"strconv"
 	"sync"
-	"image/png"
-	"image/jpeg"
 
 	"github.com/layeh/gopus"
 )
@@ -40,7 +40,7 @@ var (
 	CoverImage string
 
 	// Metadata structures
-	Metadata	MetadataStruct
+	Metadata    MetadataStruct
 	FFprobeData FFprobeMetadata
 
 	// Magic bytes to write at the start of a DCA file
@@ -62,6 +62,9 @@ var (
 	// Not sure what Discord uses here, probably voip
 	Application string
 
+	// if true, dca sends raw output without any magic bytes or json metadata
+	RawOutput bool
+
 	FrameSize int // uint16 size of each audio frame
 	MaxBytes  int // max size of opus data
 
@@ -69,7 +72,7 @@ var (
 
 	OpusEncoder *gopus.Encoder
 
-	InFile string
+	InFile      string
 	CoverFormat string = "jpeg"
 
 	OutFile string = "pipe:1"
@@ -92,6 +95,7 @@ func init() {
 	flag.IntVar(&FrameRate, "ar", 48000, "audio sampling rate")
 	flag.IntVar(&FrameSize, "as", 960, "audio frame size can be 960 (20ms), 1920 (40ms), or 2880 (60ms)")
 	flag.IntVar(&Bitrate, "ab", 64, "audio encoding bitrate in kb/s can be 8 - 128")
+	flag.BoolVar(&RawOutput, "raw", false, "Raw opus output (no metadata or magic bytes)")
 	flag.StringVar(&Application, "aa", "audio", "audio application can be voip, audio, or lowdelay")
 	flag.StringVar(&CoverFormat, "cf", "jpeg", "format the cover art will be encoded with")
 
@@ -177,112 +181,114 @@ func main() {
 	OutputChan = make(chan []byte, 10)
 	EncodeChan = make(chan []int16, 10)
 
-	// Setup the metadata
-	Metadata = MetadataStruct{
-		Dca: &DCAMetadata{
-			Version: FormatVersion,
-			Tool: &DCAToolMetadata{
-				Name: "dca",
-				Version: ProgramVersion,
-				Url: GitHubRepositoryURL,
-				Author: "bwmarrin",
+	if RawOutput == false {
+		// Setup the metadata
+		Metadata = MetadataStruct{
+			Dca: &DCAMetadata{
+				Version: FormatVersion,
+				Tool: &DCAToolMetadata{
+					Name:    "dca",
+					Version: ProgramVersion,
+					Url:     GitHubRepositoryURL,
+					Author:  "bwmarrin",
+				},
 			},
-		},
-		SongInfo: &SongMetadata{},
-		Origin: &OriginMetadata{},
-		Opus: &OpusMetadata{
-			Bitrate: Bitrate * 1000,
-			SampleRate: FrameRate,
-			Application: Application,
-			FrameSize: FrameSize,
-			Channels: Channels,
-		},
-		Extra: &ExtraMetadata{},
-	}
-	_ = Metadata
-
-	// get ffprobe data
-	if InFile != "pipe:0" {
-		ffprobe := exec.Command("ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", InFile)
-		ffprobe.Stdout = &CmdBuf
-
-		err = ffprobe.Start()
-		if err != nil {
-			fmt.Println("RunStart Error:", err)
-			return
+			SongInfo: &SongMetadata{},
+			Origin:   &OriginMetadata{},
+			Opus: &OpusMetadata{
+				Bitrate:     Bitrate * 1000,
+				SampleRate:  FrameRate,
+				Application: Application,
+				FrameSize:   FrameSize,
+				Channels:    Channels,
+			},
+			Extra: &ExtraMetadata{},
 		}
+		_ = Metadata
 
-		err = ffprobe.Wait()
-		if err != nil {
-			fmt.Println("FFprobe Error:", err)
-			return
-		}
+		// get ffprobe data
+		if InFile != "pipe:0" {
+			ffprobe := exec.Command("ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", InFile)
+			ffprobe.Stdout = &CmdBuf
 
-		err = json.Unmarshal(CmdBuf.Bytes(), &FFprobeData)
-		if err != nil {
-			fmt.Println("Erorr unmarshaling the FFprobe JSON:", err)
-			return
-		}
-
-		bitrateInt, err := strconv.Atoi(FFprobeData.Format.Bitrate)
-		if err != nil {
-			fmt.Println("Could not convert bitrate to int:", err)
-			return
-		}
-
-		Metadata.SongInfo = &SongMetadata{
-			Title: FFprobeData.Format.Tags.Title,
-			Artist: FFprobeData.Format.Tags.Artist,
-			Album: FFprobeData.Format.Tags.Album,
-			Genre: FFprobeData.Format.Tags.Genre,
-			Comments: "", // change later?
-		}
-
-		Metadata.Origin = &OriginMetadata{
-			Source: "file",
-			Bitrate: bitrateInt,
-			Channels: Channels,
-			Encoding: FFprobeData.Format.FormatLongName,
-		}
-
-		CmdBuf.Reset()
-
-		// get cover art
-		cover := exec.Command("ffmpeg", "-loglevel", "0", "-i", InFile, "-f", "singlejpeg", "pipe:1")
-		cover.Stdout = &CmdBuf
-
-		err = cover.Start()
-		if err != nil {
-			fmt.Println("RunStart Error:", err)
-			return
-		}
-
-		err = cover.Wait()
-		if err == nil {
-			buf := bytes.NewBufferString(CmdBuf.String())
-
-			if CoverFormat == "png" {
-				img, err := jpeg.Decode(buf)
-				if err == nil { // silently drop it, no image
-					err = png.Encode(&PngBuf, img)
-					if err == nil {
-						CoverImage = base64.StdEncoding.EncodeToString(PngBuf.Bytes())
-					}
-				}
-			} else {
-				CoverImage = base64.StdEncoding.EncodeToString(CmdBuf.Bytes())
+			err = ffprobe.Start()
+			if err != nil {
+				fmt.Println("RunStart Error:", err)
+				return
 			}
 
-			Metadata.SongInfo.Cover = &CoverImage
-		}
+			err = ffprobe.Wait()
+			if err != nil {
+				fmt.Println("FFprobe Error:", err)
+				return
+			}
 
-		CmdBuf.Reset()
-		PngBuf.Reset()
-	} else {
-		Metadata.Origin = &OriginMetadata{
-			Source: "pipe",
-			Channels: Channels,
-			Encoding: "pcm16/s16le",
+			err = json.Unmarshal(CmdBuf.Bytes(), &FFprobeData)
+			if err != nil {
+				fmt.Println("Erorr unmarshaling the FFprobe JSON:", err)
+				return
+			}
+
+			bitrateInt, err := strconv.Atoi(FFprobeData.Format.Bitrate)
+			if err != nil {
+				fmt.Println("Could not convert bitrate to int:", err)
+				return
+			}
+
+			Metadata.SongInfo = &SongMetadata{
+				Title:    FFprobeData.Format.Tags.Title,
+				Artist:   FFprobeData.Format.Tags.Artist,
+				Album:    FFprobeData.Format.Tags.Album,
+				Genre:    FFprobeData.Format.Tags.Genre,
+				Comments: "", // change later?
+			}
+
+			Metadata.Origin = &OriginMetadata{
+				Source:   "file",
+				Bitrate:  bitrateInt,
+				Channels: Channels,
+				Encoding: FFprobeData.Format.FormatLongName,
+			}
+
+			CmdBuf.Reset()
+
+			// get cover art
+			cover := exec.Command("ffmpeg", "-loglevel", "0", "-i", InFile, "-f", "singlejpeg", "pipe:1")
+			cover.Stdout = &CmdBuf
+
+			err = cover.Start()
+			if err != nil {
+				fmt.Println("RunStart Error:", err)
+				return
+			}
+
+			err = cover.Wait()
+			if err == nil {
+				buf := bytes.NewBufferString(CmdBuf.String())
+
+				if CoverFormat == "png" {
+					img, err := jpeg.Decode(buf)
+					if err == nil { // silently drop it, no image
+						err = png.Encode(&PngBuf, img)
+						if err == nil {
+							CoverImage = base64.StdEncoding.EncodeToString(PngBuf.Bytes())
+						}
+					}
+				} else {
+					CoverImage = base64.StdEncoding.EncodeToString(CmdBuf.Bytes())
+				}
+
+				Metadata.SongInfo.Cover = &CoverImage
+			}
+
+			CmdBuf.Reset()
+			PngBuf.Reset()
+		} else {
+			Metadata.Origin = &OriginMetadata{
+				Source:   "pipe",
+				Channels: Channels,
+				Encoding: "pcm16/s16le",
+			}
 		}
 	}
 
@@ -414,25 +420,27 @@ func writer() {
 	// 16KB output buffer
 	wbuf := bufio.NewWriterSize(os.Stdout, 16384)
 
-	// write the magic bytes
-	fmt.Print(MagicBytes)
+	if RawOutput == false {
+		// write the magic bytes
+		fmt.Print(MagicBytes)
 
-	// encode and write json length
-	json, err := json.Marshal(Metadata)
-	if err != nil {
-		fmt.Println("Failed to encode the Metadata JSON:", err)
-		return
+		// encode and write json length
+		json, err := json.Marshal(Metadata)
+		if err != nil {
+			fmt.Println("Failed to encode the Metadata JSON:", err)
+			return
+		}
+
+		jsonlen = int32(len(json))
+		err = binary.Write(wbuf, binary.LittleEndian, &jsonlen)
+		if err != nil {
+			fmt.Println("error writing output: ", err)
+			return
+		}
+
+		// write the actual json
+		wbuf.Write(json)
 	}
-
-	jsonlen = int32(len(json))
-	err = binary.Write(wbuf, binary.LittleEndian, &jsonlen)
-	if err != nil {
-		fmt.Println("error writing output: ", err)
-		return
-	}
-
-	// write the actual json
-	wbuf.Write(json)
 
 	for {
 		opus, ok := <-OutputChan
