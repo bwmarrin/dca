@@ -419,6 +419,7 @@ func writer() {
 
 	// 16KB output buffer
 	wbuf := bufio.NewWriterSize(os.Stdout, 16384)
+	defer wbuf.Flush()
 
 	if RawOutput == false {
 		// write the magic bytes
