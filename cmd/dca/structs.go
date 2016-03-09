@@ -33,12 +33,12 @@ type DCAToolMetadata struct {
 // 
 // Contains information about the song that was encoded.
 type SongMetadata struct {
-    Title       string  `json:"title"`
-    Artist      string  `json:"artist"`
-    Album       string  `json:"album"`
-    Genre       string  `json:"genre"`
-    Comments    string  `json:"comments"`
-    Cover       *string `json:"cover"`
+    Title       *string  `json:"title"`
+    Artist      *string  `json:"artist"`
+    Album       *string  `json:"album"`
+    Genre       *string  `json:"genre"`
+    Comments    *string  `json:"comments"`
+    Cover       *string  `json:"cover"`
 }
 
 // Origin information metadata struct
@@ -46,11 +46,11 @@ type SongMetadata struct {
 // Contains information about where the song came from,
 // audio bitrate, channels and original encoding.
 type OriginMetadata struct {
-    Source      string  `json:"source"`
-    Bitrate     int     `json:"abr"`
-    Channels    int     `json:"channels"`
-    Encoding    string  `json:"encoding"`
-    Url         string  `json:"url"`
+    Source      *string  `json:"source"`
+    Bitrate     *int     `json:"abr"`
+    Channels    *int     `json:"channels"`
+    Encoding    *string  `json:"encoding"`
+    Url         *string  `json:"url"`
 }
 
 // Opus metadata struct
