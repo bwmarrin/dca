@@ -69,18 +69,18 @@ var (
 	Volume int // change audio volume (256=normal)
 
 	// Struct Pointers
-	SongTitle 		string
-	SongArtist		string
-	SongAlbum		string
-	SongGenre		string
-	SongComments	string
-	SongCover		string
+	SongTitle    string
+	SongArtist   string
+	SongAlbum    string
+	SongGenre    string
+	SongComments string
+	SongCover    string
 
-	OriginSource	string
-	OriginBitrate	int = -1
-	OriginChannels	int = -1
-	OriginEncoding	string
-	OriginURL		string
+	OriginSource   string
+	OriginBitrate  int = -1
+	OriginChannels int = -1
+	OriginEncoding string
+	OriginURL      string
 
 	OpusEncoder *gopus.Encoder
 
@@ -248,7 +248,7 @@ func main() {
 			}
 
 			if FFprobeData.Format.Tags.Title != "" {
-				SongTitle  = FFprobeData.Format.Tags.Title
+				SongTitle = FFprobeData.Format.Tags.Title
 				Metadata.SongInfo.Title = &SongTitle
 			}
 
@@ -267,16 +267,16 @@ func main() {
 				Metadata.SongInfo.Genre = &SongGenre
 			}
 
-			OriginSource   = "file"
-			OriginBitrate  = bitrateInt
+			OriginSource = "file"
+			OriginBitrate = bitrateInt
 			OriginChannels = Channels
 			OriginEncoding = FFprobeData.Format.FormatLongName
 
 			Metadata.Origin = &OriginMetadata{
-				Source:		&OriginSource,
-				Bitrate:	&OriginBitrate,
-				Channels:	&OriginChannels,
-				Encoding:	&OriginEncoding,
+				Source:   &OriginSource,
+				Bitrate:  &OriginBitrate,
+				Channels: &OriginChannels,
+				Encoding: &OriginEncoding,
 			}
 
 			CmdBuf.Reset()
@@ -313,14 +313,14 @@ func main() {
 			CmdBuf.Reset()
 			PngBuf.Reset()
 		} else {
-			OriginSource   = "pipe"
+			OriginSource = "pipe"
 			OriginChannels = Channels
 			OriginEncoding = "pcm16/s16le"
 
 			Metadata.Origin = &OriginMetadata{
-				Source:		&OriginSource,
-				Channels:	&OriginChannels,
-				Encoding:	&OriginEncoding,
+				Source:   &OriginSource,
+				Channels: &OriginChannels,
+				Encoding: &OriginEncoding,
 			}
 		}
 	}
