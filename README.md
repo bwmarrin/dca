@@ -20,4 +20,5 @@ probably the best version to use.
 
 ### 3rd Party implementations
 * [dca-rs](https://github.com/nstafie/dca-rs) - Rust implementation of the DCA1 format.
+* [dCa](https://github.com/uppfinnarn/dca) - C implementation of the DCA0 format
 
