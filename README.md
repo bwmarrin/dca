@@ -12,7 +12,7 @@ Currently, the **dca-rs** implementation provides the best performance and is
 probably the best version to use.
 
 ### Official Specifications
-* [DCA1 specification draft](https://github.com/bwmarrin/dca/wiki/DCA1-specification-draft)
+* [DCA1 specification](https://github.com/bwmarrin/dca/wiki/DCA1-specification)
 
 ### Reference implementations
 * [Google Go dca Command](https://github.com/bwmarrin/dca/tree/master/cmd/dca)
