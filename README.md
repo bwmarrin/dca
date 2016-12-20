@@ -16,15 +16,6 @@ experiance.  It is the recommended implementation to use.
 
 ### Implementations of DCA
  
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 | 
-
-
-
- 
 | Name                                             | Lang | Ver  |
 | ------------------------------------------------ |------|------|
 | [dca-rs](https://github.com/nstafie/dca-rs)      | Rust | DCA1 |
