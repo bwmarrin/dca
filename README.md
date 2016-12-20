@@ -23,14 +23,10 @@ experiance.  It is the recommended implementation to use.
 | zebra stripes | are neat      |    $1 | 
 
 
-| Name                                             | Lang | Ver  |
-| ------------------------------------------------ |-------------|
-| asd | R | 1 |
-
 
  
 | Name                                             | Lang | Ver  |
-| ------------------------------------------------ |-------------|
+| ------------------------------------------------ |------|------|
 | [dca-rs](https://github.com/nstafie/dca-rs)      | Rust | DCA1 |
 | [dCa](https://github.com/uppfinnarn/dca)         | C    | DCA0 |
 | [dcad](https://github.com/b1naryth1ef/dcad)      | D    | DCA? |
