@@ -16,10 +16,10 @@ experiance.  It is the recommended implementation to use.
 
 ### Implementations of DCA
  
-| Name                                             | Lang | Ver  | Notes                      |
-| ------------------------------------------------ |:-----------:| --                     ---:|
-| [dca-rs](https://github.com/nstafie/dca-rs)      | Rust | DCA1 |  |
-| [dCa](https://github.com/uppfinnarn/dca)         | C    | DCA0 |  |
-| [dcad](https://github.com/b1naryth1ef/dcad)      | D    | DCA? |  |
-| [dca](https://github.com/jonas747/dca)           | Go   | DCA? |  |
+| Name                                             | Lang | Ver  |
+| ------------------------------------------------ |-------------|
+| [dca-rs](https://github.com/nstafie/dca-rs)      | Rust | DCA1 |
+| [dCa](https://github.com/uppfinnarn/dca)         | C    | DCA0 |
+| [dcad](https://github.com/b1naryth1ef/dcad)      | D    | DCA? |
+| [dca](https://github.com/jonas747/dca)           | Go   | DCA? |
 
