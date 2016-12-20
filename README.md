@@ -21,7 +21,13 @@ experiance.  It is the recommended implementation to use.
 | col 3 is      | right-aligned | $1600 |
 | col 2 is      | centered      |   $12 |
 | zebra stripes | are neat      |    $1 | 
- 
+
+
+| Name                                             | Lang | Ver  |
+| ------------------------------------------------ |-------------|
+| asd | R | 1 |
+
+
  
 | Name                                             | Lang | Ver  |
 | ------------------------------------------------ |-------------|
