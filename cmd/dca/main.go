@@ -16,7 +16,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/layeh/gopus"
+	"layeh.com/gopus"
 )
 
 // Define constants
@@ -25,7 +25,7 @@ const (
 	FormatVersion int8 = 1
 
 	// The current version of the DCA program
-	ProgramVersion string = "0.0.1"
+	ProgramVersion string = "0.0.2"
 
 	// The URL to the GitHub repository of DCA
 	GitHubRepositoryURL string = "https://github.com/bwmarrin/dca"
