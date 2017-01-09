@@ -37,8 +37,6 @@ var (
 	CmdBuf bytes.Buffer
 	PngBuf bytes.Buffer
 
-	CoverImage string
-
 	// Metadata structures
 	Metadata    MetadataStruct
 	FFprobeData FFprobeMetadata
@@ -69,6 +67,20 @@ var (
 	MaxBytes  int // max size of opus data
 
 	Volume int // change audio volume (256=normal)
+
+	// Struct Pointers
+	SongTitle    string
+	SongArtist   string
+	SongAlbum    string
+	SongGenre    string
+	SongComments string
+	SongCover    string
+
+	OriginSource   string
+	OriginBitrate  int = -1
+	OriginChannels int = -1
+	OriginEncoding string
+	OriginURL      string
 
 	OpusEncoder *gopus.Encoder
 
@@ -235,19 +247,36 @@ func main() {
 				return
 			}
 
-			Metadata.SongInfo = &SongMetadata{
-				Title:    FFprobeData.Format.Tags.Title,
-				Artist:   FFprobeData.Format.Tags.Artist,
-				Album:    FFprobeData.Format.Tags.Album,
-				Genre:    FFprobeData.Format.Tags.Genre,
-				Comments: "", // change later?
+			if FFprobeData.Format.Tags.Title != "" {
+				SongTitle = FFprobeData.Format.Tags.Title
+				Metadata.SongInfo.Title = &SongTitle
 			}
 
+			if FFprobeData.Format.Tags.Artist != "" {
+				SongArtist = FFprobeData.Format.Tags.Artist
+				Metadata.SongInfo.Artist = &SongArtist
+			}
+
+			if FFprobeData.Format.Tags.Album != "" {
+				SongAlbum = FFprobeData.Format.Tags.Album
+				Metadata.SongInfo.Album = &SongAlbum
+			}
+
+			if FFprobeData.Format.Tags.Genre != "" {
+				SongGenre = FFprobeData.Format.Tags.Genre
+				Metadata.SongInfo.Genre = &SongGenre
+			}
+
+			OriginSource = "file"
+			OriginBitrate = bitrateInt
+			OriginChannels = Channels
+			OriginEncoding = FFprobeData.Format.FormatLongName
+
 			Metadata.Origin = &OriginMetadata{
-				Source:   "file",
-				Bitrate:  bitrateInt,
-				Channels: Channels,
-				Encoding: FFprobeData.Format.FormatLongName,
+				Source:   &OriginSource,
+				Bitrate:  &OriginBitrate,
+				Channels: &OriginChannels,
+				Encoding: &OriginEncoding,
 			}
 
 			CmdBuf.Reset()
@@ -271,23 +300,27 @@ func main() {
 					if err == nil { // silently drop it, no image
 						err = png.Encode(&PngBuf, img)
 						if err == nil {
-							CoverImage = base64.StdEncoding.EncodeToString(PngBuf.Bytes())
+							SongCover = base64.StdEncoding.EncodeToString(PngBuf.Bytes())
 						}
 					}
 				} else {
-					CoverImage = base64.StdEncoding.EncodeToString(CmdBuf.Bytes())
+					SongCover = base64.StdEncoding.EncodeToString(CmdBuf.Bytes())
 				}
 
-				Metadata.SongInfo.Cover = &CoverImage
+				Metadata.SongInfo.Cover = &SongCover
 			}
 
 			CmdBuf.Reset()
 			PngBuf.Reset()
 		} else {
+			OriginSource = "pipe"
+			OriginChannels = Channels
+			OriginEncoding = "pcm16/s16le"
+
 			Metadata.Origin = &OriginMetadata{
-				Source:   "pipe",
-				Channels: Channels,
-				Encoding: "pcm16/s16le",
+				Source:   &OriginSource,
+				Channels: &OriginChannels,
+				Encoding: &OriginEncoding,
 			}
 		}
 	}
