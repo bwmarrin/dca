@@ -56,7 +56,7 @@ This uses the default dca settings, you can of course add arguments to the dca
 command to modify it's default behaviour.
 
 ```sh
-ffmpeg -i test.mp3 -f s16le -ar 48000 -ac 2 pipe:1 | ./dca > test.dca
+ffmpeg -i test.mp3 -f s16le -ar 48000 -ac 2 pipe:1 | dca > test.dca
 ```
 
 
