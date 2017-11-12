@@ -26,6 +26,39 @@ Gophers](https://discord.gg/0f1SbxBZjYq9jLBk) chat server.**
 
 ## Getting Started
 
+This assumes you already have a working Go environment, if not please see
+[this page](https://golang.org/doc/install) first.
+
+### Installing dca
+
+#### Linux
+
+From a terminal run the following command to download and compile this dca tool.
+
+```sh
+go get -u github.com/bwmarrin/dca/cmd/dca
+```
+
+This will use the Go get tool to download the dca package and the opus library 
+dependency then compile the tool and install it in your Go bin folder.
+
+
+### Using dca with ffmpeg
+
+This dca tool only accepts PCM input and one of the easiest ways to get that
+is by using ffmpeg tool to convert (nearly) any audio file you have into PCM
+and then pipe that into this tool.
+
+Below is an example of using ffmpeg to read a file `test.mp3` then convert that 
+into PCM and pipe it into this dca tool and save the result as `test.dca`
+
+This uses the default dca settings, you can of course add arguments to the dca 
+command to modify it's default behaviour.
+
+```sh
+ffmpeg -i test.mp3 -f s16le -ar 48000 -ac 2 pipe:1 | ./dca > test.dca
+```
+
 
 ## Structure
 
