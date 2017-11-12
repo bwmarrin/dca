@@ -4,8 +4,7 @@
 dca is a command line tool that provides an example implementation of the DCA 
 audio format.
 
-This tool accepts json metadata from a file, and raw PCM from stdin and outputs 
-valid DCA0 data on stdout.
+This tool accepts raw PCM from stdin and outputs valid DCA0 data on stdout.
 
 **NOTE:** Currently this tool only supports DCA0.  DCA1 will be added later.
 
@@ -30,16 +29,7 @@ Gophers](https://discord.gg/0f1SbxBZjYq9jLBk) chat server.**
 
 ## Structure
 
-Here is the structure of a DCA1 file header:
-
-```
-| 0 | 1 | 2 |         3        |  4  |  5  |  6  |  7  | 8 - JSON Size |
-|---|---|---|------------------|-----------------------|---------------|
-|    DCA    |  Version Number  |       JSON Size       | JSON Metadata |
-|  Magic Header with Version   |      signed int32     |               |
-```
-
-Here is the structure of A DCA0/1 frame:
+Here is the structure of a DCA0 frame:
 
 ```
 | 0 | 1 | 2 - Frame Size |
