@@ -15,8 +15,8 @@ Gophers](https://discord.gg/0f1SbxBZjYq9jLBk) chat server.**
 
 ### What's here?
 
-This repository hosts the official specification for `dca` and a reference
-implementation.
+This repository hosts the official specification for `dca` and an example 
+implementation of the DCA1 specification.
 
 ### Official Specifications
 * [DCA0 specification](https://github.com/bwmarrin/dca/wiki/DCA0-specification)
