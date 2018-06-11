@@ -15,32 +15,46 @@ import (
 
 var (
 
-	// 1 for mono, 2 for stereo
+	// AudioChannels sets the ops encoder channel value.
+	// Must be set to 1 for mono, 2 for stereo
 	AudioChannels int
 
+	// AudioFrameRate sets the opus encoder Frame Rate value.
 	// Must be one of 8000, 12000, 16000, 24000, or 48000.
 	// Discord only uses 48000 currently.
 	AudioFrameRate int
 
-	// Rates from 500 to 512000 bits per second are meaningful
-	// Discord only uses 8000 to 128000 and default is 64000
+	// AudioBitrate sets the opus encoder bitrate (quality) value.
+	// Must be within 500 to 512000 bits per second are meaningful.
+	// Discord only uses 8000 to 128000 and default is 64000.
 	AudioBitrate int
 
+	// AudioApplication sets the opus encoder Application value.
 	// Must be one of voip, audio, or lowdelay.
-	// DCA defaults to audio which is ideal for music
-	// Not sure what Discord uses here, probably voip
+	// DCA defaults to audio which is ideal for music.
+	// Not sure what Discord uses here, probably voip.
 	AudioApplication string
 
-	// uint16 size of each audio frame
+	// AudioFrameSize sets the opus encoder frame size value.
+	// The Frame Size is the length or amount of milliseconds each Opus frame
+	// will be.
+	// Must be one of 960 (20ms), 1920 (40ms), or 2880 (60ms)
 	AudioFrameSize int
 
-	// max size of opus data
+	// MaxBytes is a calculated value of the largest possible size that an
+	// opus frame could be.
 	MaxBytes int
 
+	// OpusEncoder holds an instance of an gopus Encoder
 	OpusEncoder *gopus.Encoder
-	EncodeChan  chan []int16
-	OutputChan  chan []byte
-	WaitGroup   sync.WaitGroup
+
+	// EncodeChan is used for sending data to the encoder goroutine
+	EncodeChan chan []int16
+	// OutputChan is used for sending data to the writer goroutine
+	OutputChan chan []byte
+
+	// WaitGroup is used to wait untill all goroutines have finished.
+	WaitGroup sync.WaitGroup
 )
 
 // reader reads from the input
@@ -123,7 +137,12 @@ func writer() {
 
 	// 16KB output buffer
 	stdout := bufio.NewWriterSize(os.Stdout, 16384)
-	defer stdout.Flush()
+	defer func() {
+		err := stdout.Flush()
+		if err != nil {
+			log.Println("error flushing stdout, ", err)
+		}
+	}()
 
 	for {
 		opus, ok := <-OutputChan
