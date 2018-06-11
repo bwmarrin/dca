@@ -4,8 +4,8 @@ go:
     - 1.9.x
     - 1.10.x
 install:
-    - go get -v .
     - go get -v github.com/golang/lint/golint
+    - go get -v layeh.com/gopus
 script:
     - go build -v ./...
     - go vet ./...
