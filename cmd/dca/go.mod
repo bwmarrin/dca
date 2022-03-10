@@ -1,4 +1,4 @@
-module dca
+module github.com/bwmarrin/dca/cmd/dca
 
 go 1.16
 
