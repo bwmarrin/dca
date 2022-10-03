@@ -36,10 +36,10 @@ This assumes you already have a working Go environment, if not please see
 From a terminal run the following command to download and compile this dca tool.
 
 ```sh
-go get -u github.com/bwmarrin/dca/cmd/dca
+go install github.com/bwmarrin/dca/cmd/dca@latest
 ```
 
-This will use the Go get tool to download the dca package and the opus library 
+This will use the Go install tool to download the dca package and the opus library 
 dependency then compile the tool and install it in your Go bin folder.
 
 
